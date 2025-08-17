@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
 from django.core.validators import MinValueValidator
 
 class Category(models.Model):
@@ -72,4 +72,4 @@ class Budget(models.Model):
 
     def __str__(self):
         label = 'ALL' if self.category is None else self.category.name
-        return f"{self.period} budget {self.year}-{self.year}-{self.month or ''}{label}:{self.limit}
+        return f"{self.period} budget {self.year}-{self.year}-{self.month or ''}{label}:{self.limit}"
