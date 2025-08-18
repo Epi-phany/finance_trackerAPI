@@ -56,9 +56,9 @@ class BudgetSerializer(serializers.ModelSerializer):
         if category and category.user != user:
             raise serializers.ValidationError("Category does not belong to you.")
 
-        if period == Budget.MONTHLY and not month:
+        if period == Budget.PERIOD_MONTHLY and not month:
             raise serializers.ValidationError("Month is required for monthly budgets.")
-        if period == Budget.YEARLY and month:
+        if period == Budget.PERIOD_YEARLY and month:
             raise serializers.ValidationError("Month must be empty for yearly budgets.")
         if limit is not None and limit <= 0:
             raise serializers.ValidationError("Budget limit must be greater than zero.")

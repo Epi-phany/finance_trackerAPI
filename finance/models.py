@@ -14,7 +14,8 @@ class Category(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='categories')
     name = models.CharField(max_length=50)
     choice_type = models.CharField(max_length=10,choices=CHOICES)
-    
+    created_at = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         unique_together = ('user', 'name', 'choice_type')
         ordering = ['choice_type','name']
@@ -60,16 +61,26 @@ class Budget(models.Model):
     year = models.IntegerField()
     month = models.IntegerField(null=True, blank=True)
     limit = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'category', 'period', 'year', 'month'],
-                name='unique_budget_per_period_and_category'
-            )
-        ]
-        ordering = ['-year', '-month']
+        unique_together = ("user", "category", "period", "year", "month")
+        ordering = ["-year", "-month", "category__name"]
 
     def __str__(self):
-        label = 'ALL' if self.category is None else self.category.name
-        return f"{self.period} budget {self.year}-{self.year}-{self.month or ''}{label}:{self.limit}"
+        label = f"{self.period} {self.year}" + (f"-{self.month:02d}" if self.period == self.PERIOD_MONTHLY else "")
+        return f"Budget({self.user}, {self.category or 'ALL'}, {label})"
+
+
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=['user', 'category', 'period', 'year', 'month'],
+    #             name='unique_budget_per_period_and_category'
+    #         )
+    #     ]
+    #     ordering = ['-year', '-month']
+
+    # def __str__(self):
+    #     label = 'ALL' if self.category is None else self.category.name
+    #     return f"{self.period} budget {self.year}-{self.year}-{self.month or ''}{label}:{self.limit}"
